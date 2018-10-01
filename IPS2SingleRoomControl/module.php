@@ -120,6 +120,21 @@ class IPS2SingleRoomControl extends IPSModule
 			$arrayOptions[] = array("label" => "2 (C)", "value" => 2);
 			$arrayOptions[] = array("label" => "3 (D)", "value" => 3);
 			$arrayElements[] = array("type" => "Select", "name" => "1W_Pin", "caption" => "Pin", "options" => $arrayOptions );
+			$arrayElements[] = array("type" => "Label", "label" => "Verstärkungsfaktor Proportionalregler:");
+			$arrayElements[] = array("type" => "NumberSpinner", "name" => "KP", "caption" => "Kp", "digits" => 1);
+			$arrayElements[] = array("type" => "Label", "label" => "Verstärkungsfaktor Integralregler:");
+			$arrayElements[] = array("type" => "NumberSpinner", "name" => "KI", "caption" => "Ki", "digits" => 1);
+			$arrayElements[] = array("type" => "Label", "label" => "Verstärkungsfaktor Differenzialregler:");
+			$arrayElements[] = array("type" => "NumberSpinner", "name" => "KD", "caption" => "Kd", "digits" => 1);
+			$arrayElements[] = array("type" => "Label", "label" => "__________________________________________________________");
+			$arrayElements[] = array("type" => "Label", "label" => "Minimale Öffnung des Stellantriebs:");
+			$arrayElements[] = array("type" => "NumberSpinner", "name" => "PositionElementMin", "caption" => "Minimum (%)");
+			$arrayElements[] = array("type" => "Label", "label" => "Maximale Öffnung des Stellantriebs:");
+			$arrayElements[] = array("type" => "NumberSpinner", "name" => "PositionElementMax", "caption" => "Maximum (%)");
+			$arrayElements[] = array("type" => "Label", "label" => "Minmale Schaltzeit des Stellantriebs:");
+			$arrayElements[] = array("type" => "NumberSpinner", "name" => "MinSwitchTime", "caption" => "Minumum (sek)");
+			$arrayElements[] = array("type" => "Label", "label" => "Variable die vom PWM-Ausgang geschaltet werden soll:");
+			$arrayElements[] = array("type" => "SelectVariable", "name" => "PWM_ActuatorID", "caption" => "Aktor");  
 		}
 		elseif ($this->ReadPropertyInteger("ActuatorTyp") == 5) {
 			$arrayElements[] = array("type" => "Label", "label" => "UDP Socket des ESP8266-Stellantriebes:");
