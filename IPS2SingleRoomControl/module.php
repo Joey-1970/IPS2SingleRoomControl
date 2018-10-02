@@ -494,15 +494,15 @@ class IPS2SingleRoomControl extends IPSModule
 		If ($PWMontime > 0) {
 			SetValueBoolean($this->GetIDForIdent("PWM_Mode"), true);
 			// allgemeiner Aktor true-false
-			If ($this->ReadPropertyInteger("PWM_ActuatorID") > 0) {
+			If (($this->ReadPropertyInteger("ActuatorTyp") == 1) AND ($this->ReadPropertyInteger("PWM_ActuatorID") > 0)) {
 				SetValueBoolean($this->ReadPropertyInteger("PWM_ActuatorID"), true);
 			}
 			// 1W-Aktor
-			If ($this->ReadPropertyInteger("1W_ActuatorID") > 0) {
+			If (($this->ReadPropertyInteger("ActuatorTyp") == 4) AND ($this->ReadPropertyInteger("1W_ActuatorID") > 0)) {
 				OW_SetPin($this->ReadPropertyInteger("1W_ActuatorID"), $this->ReadPropertyInteger("1W_Pin"), true);
 			}
 			// ESP-Aktor
-			If ($this->ReadPropertyInteger("ESP_ActuatorID") > 0) {
+			If (($this->ReadPropertyInteger("ActuatorTyp") == 5) AND ($this->ReadPropertyInteger("ESP_ActuatorID") > 0)) {
 				USCK_SendText($this->ReadPropertyInteger("ESP_ActuatorID"),"3,0");
 			}
 			$this->SetTimerInterval("PWM", (int)$PWMontime * 1000);
