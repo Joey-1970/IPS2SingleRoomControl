@@ -26,6 +26,7 @@ class IPS2SingleRoomControl extends IPSModule
 		$this->RegisterPropertyInteger("ActuatorTyp", 1);
 		$this->RegisterPropertyInteger("PWM_ActuatorID", 0);
 		$this->RegisterPropertyInteger("HM_ActuatorID", 0);
+		$this->RegisterPropertyInteger("HMIP_ActuatorID", 0);
 		$this->RegisterPropertyInteger("FS_ActuatorID", 0);
 		$this->RegisterPropertyInteger("1W_ActuatorID", 0);
 		$this->RegisterPropertyInteger("1W_Pin", 0);
@@ -82,6 +83,7 @@ class IPS2SingleRoomControl extends IPSModule
 		$arrayOptions = array();
 		$arrayOptions[] = array("label" => "PWM", "value" => 1);
 		$arrayOptions[] = array("label" => "HM", "value" => 2);
+		$arrayOptions[] = array("label" => "HM IP", "value" => 6);
 		$arrayOptions[] = array("label" => "FS20", "value" => 3);
 		$arrayOptions[] = array("label" => "1-Wire (DS2413)", "value" => 4);
 		$arrayOptions[] = array("label" => "ESP8266", "value" => 5);
@@ -105,6 +107,10 @@ class IPS2SingleRoomControl extends IPSModule
 		}
 		elseif ($this->ReadPropertyInteger("ActuatorTyp") == 2) {
 			$arrayElements[] = array("type" => "Label", "label" => "Instanz des HM-Stellantriebes:");
+			$arrayElements[] = array("type" => "SelectInstance", "name" => "HM_ActuatorID", "caption" => "Aktor");	
+		}
+		elseif ($this->ReadPropertyInteger("ActuatorTyp") == 6) {
+			$arrayElements[] = array("type" => "Label", "label" => "Instanz des HM IP-Stellantriebes:");
 			$arrayElements[] = array("type" => "SelectInstance", "name" => "HM_ActuatorID", "caption" => "Aktor");	
 		}
 		elseif ($this->ReadPropertyInteger("ActuatorTyp") == 3) {
