@@ -111,7 +111,7 @@ class IPS2SingleRoomControl extends IPSModule
 		}
 		elseif ($this->ReadPropertyInteger("ActuatorTyp") == 6) {
 			$arrayElements[] = array("type" => "Label", "label" => "Instanz des HM IP-Stellantriebes:");
-			$arrayElements[] = array("type" => "SelectInstance", "name" => "HM_ActuatorID", "caption" => "Aktor");	
+			$arrayElements[] = array("type" => "SelectInstance", "name" => "HMIP_ActuatorID", "caption" => "Aktor");	
 		}
 		elseif ($this->ReadPropertyInteger("ActuatorTyp") == 3) {
 			$arrayElements[] = array("type" => "Label", "label" => "Instanz des FS20-Stellantriebes:");
