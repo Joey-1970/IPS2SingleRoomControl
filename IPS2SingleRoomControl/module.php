@@ -536,6 +536,15 @@ class IPS2SingleRoomControl extends IPSModule
 				HM_WriteValueFloat($this->ReadPropertyInteger("HM_ActuatorID"), "SET_TEMPERATURE", 5 );
 			}
 		}
+		// HMIP-Aktor
+		If ($this->ReadPropertyInteger("HMIP_ActuatorID") > 0) {
+			If ($WindowStatus == true) {
+				HM_WriteValueFloat($this->ReadPropertyInteger("HMIP_ActuatorID"), "SET_POINT_TEMPERATURE", GetValueFloat($this->GetIDForIdent("SetpointTemperature")) );
+			}
+			else {
+				HM_WriteValueFloat($this->ReadPropertyInteger("HMIP_ActuatorID"), "SET_POINT_TEMPERATURE", 5 );
+			}
+		}
 		// FS20-Aktor
 		If ($this->ReadPropertyInteger("FS_ActuatorID") > 0) {
 			If ($WindowStatus == true) {
