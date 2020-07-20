@@ -60,6 +60,46 @@ class IPS2SingleRoomControl extends IPSModule
 		$this->RegisterPropertyInteger("ColorTemperatur_6", 0x2A0A0A);
 		$this->RegisterPropertyInteger("ColorTemperatur_7", 0x80FF00);
 		$this->RegisterPropertyInteger("ColorTemperatur_8", 0x298A08);
+		
+		// Profile anlegen
+		$this->RegisterProfileInteger("window.status", "Window", "", "", 0, 3, 1);
+		IPS_SetVariableProfileAssociation("window.status", 0, "geschlossen", "Window", -1);
+		IPS_SetVariableProfileAssociation("window.status", 1, "gekippt", "Window", -1);
+		IPS_SetVariableProfileAssociation("window.status", 2, "geöffnet", "Window", -1);
+		IPS_SetVariableProfileAssociation("window.status", 3, "undefiniert", "Warning", -1);
+		
+		$this->RegisterProfileInteger("heating.modus", "Radiator", "", "", 0, 5, 1);
+		IPS_SetVariableProfileAssociation("heating.modus", 0, "Manuell", "Radiator", -1);
+		IPS_SetVariableProfileAssociation("heating.modus", 1, "Automatik", "Radiator", -1);
+		IPS_SetVariableProfileAssociation("heating.modus", 2, "Abwesenheit", "Radiator", -1);
+		IPS_SetVariableProfileAssociation("heating.modus", 3, "Boost", "Radiator", -1);
+		IPS_SetVariableProfileAssociation("heating.modus", 4, "Feiertag", "Radiator", -1);
+		IPS_SetVariableProfileAssociation("heating.modus", 5, "Lüftung", "Radiator", -1);
+		
+		// Statusvariablen anlegen
+		$this->RegisterVariableFloat("ActualTemperature", "Ist-Temperatur", "~Temperature", 10);
+		
+		$this->RegisterVariableFloat("SetpointTemperature", "Soll-Temperatur", "~Temperature.Room", 20);
+		$this->EnableAction("SetpointTemperature");
+		$this->RegisterVariableBoolean("OperatingMode", "Betriebsart Automatik", "~Switch", 30);
+		$this->EnableAction("OperatingMode");
+		$this->RegisterVariableBoolean("OperatingModeInterrupt", "Betriebsart Automatik Interrupt", "~Switch", 32);
+		
+		$this->RegisterVariableBoolean("BoostMode", "Boost-Mode", "~Switch", 35);
+		$this->EnableAction("BoostMode");
+		$this->RegisterVariableInteger("Modus", "Modus", "heating.modus", 37);
+		
+		$this->RegisterVariableInteger("PositionElement", "Stellelement", "~Intensity.100", 40);
+		
+		$this->RegisterVariableBoolean("PWM_Mode", "PWM-Status", "~Switch", 40);
+		$this->EnableAction("OperatingMode");
+		$this->RegisterVariableInteger("WindowStatus", "Fenster-Status", "window.status", 45);
+		
+		$this->RegisterVariableFloat("SumDeviation", "Summe Regelabweichungen", "~Temperature", 50);
+		
+		$this->RegisterVariableFloat("ActualDeviation", "Aktuelle Regelabweichung", "~Temperature", 60);
+		
+		
 	}
 	
 	public function GetConfigurationForm() 
@@ -214,44 +254,6 @@ class IPS2SingleRoomControl extends IPSModule
 		
 		// Anlegen des Wochenplans
 		$this->RegisterEvent("Wochenplan", "IPS2SRC_Event_".$this->InstanceID, 2, $this->InstanceID, 150);
-		$this->RegisterProfileInteger("window.status", "Window", "", "", 0, 3, 1);
-		IPS_SetVariableProfileAssociation("window.status", 0, "geschlossen", "Window", -1);
-		IPS_SetVariableProfileAssociation("window.status", 1, "gekippt", "Window", -1);
-		IPS_SetVariableProfileAssociation("window.status", 2, "geöffnet", "Window", -1);
-		IPS_SetVariableProfileAssociation("window.status", 3, "undefiniert", "Warning", -1);
-		
-		$this->RegisterProfileInteger("heating.modus", "Radiator", "", "", 0, 5, 1);
-		IPS_SetVariableProfileAssociation("heating.modus", 0, "Manuell", "Radiator", -1);
-		IPS_SetVariableProfileAssociation("heating.modus", 1, "Automatik", "Radiator", -1);
-		IPS_SetVariableProfileAssociation("heating.modus", 2, "Abwesenheit", "Radiator", -1);
-		IPS_SetVariableProfileAssociation("heating.modus", 3, "Boost", "Radiator", -1);
-		IPS_SetVariableProfileAssociation("heating.modus", 4, "Feiertag", "Radiator", -1);
-		IPS_SetVariableProfileAssociation("heating.modus", 5, "Lüftung", "Radiator", -1);
-		
-		$this->RegisterVariableFloat("ActualTemperature", "Ist-Temperatur", "~Temperature", 10);
-		$this->DisableAction("ActualTemperature");
-		$this->RegisterVariableFloat("SetpointTemperature", "Soll-Temperatur", "~Temperature.Room", 20);
-		$this->EnableAction("SetpointTemperature");
-		$this->RegisterVariableBoolean("OperatingMode", "Betriebsart Automatik", "~Switch", 30);
-		$this->EnableAction("OperatingMode");
-		$this->RegisterVariableBoolean("OperatingModeInterrupt", "Betriebsart Automatik Interrupt", "~Switch", 32);
-		$this->DisableAction("OperatingModeInterrupt");
-		$this->RegisterVariableBoolean("BoostMode", "Boost-Mode", "~Switch", 35);
-		$this->EnableAction("BoostMode");
-		$this->RegisterVariableInteger("Modus", "Modus", "heating.modus", 37);
-		$this->DisableAction("Modus");
-		$this->RegisterVariableInteger("PositionElement", "Stellelement", "~Intensity.100", 40);
-		$this->DisableAction("PositionElement");
-		$this->RegisterVariableBoolean("PWM_Mode", "PWM-Status", "~Switch", 40);
-		$this->EnableAction("OperatingMode");
-		$this->RegisterVariableInteger("WindowStatus", "Fenster-Status", "window.status", 45);
-		$this->DisableAction("WindowStatus");
-		$this->RegisterVariableFloat("SumDeviation", "Summe Regelabweichungen", "~Temperature", 50);
-		$this->DisableAction("SumDeviation");
-		IPS_SetHidden($this->GetIDForIdent("SumDeviation"), true);
-		$this->RegisterVariableFloat("ActualDeviation", "Aktuelle Regelabweichung", "~Temperature", 60);
-		$this->DisableAction("ActualDeviation");
-		IPS_SetHidden($this->GetIDForIdent("ActualDeviation"), true);
 		
 		// Anlegen der Daten für den Wochenplan
 		for ($i = 0; $i <= 6; $i++) {
