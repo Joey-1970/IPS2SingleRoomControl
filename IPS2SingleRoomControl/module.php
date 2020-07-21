@@ -234,14 +234,10 @@ class IPS2SingleRoomControl extends IPSModule
 		$arrayElements[] = array("type" => "SelectColor", "name" => "ColorTemperatur_8", "caption" => "Farbe");
 		
 		$arrayActions = array();
-		If ($this->ReadPropertyBoolean("Open") == true) {   
-			$arrayActions[] = array("type" => "Label", "label" => "Aktuell sind keine Testfunktionen definiert");
-		}
-		else {
-			$arrayActions[] = array("type" => "Label", "label" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
-		}
+		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
+		$arrayActions[] = array("type" => "TestCenter", "name" => "TestCenter");
 		
- 		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 
+ 		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 	 	 
  	} 
 	
 	
