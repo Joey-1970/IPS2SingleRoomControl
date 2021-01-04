@@ -369,7 +369,7 @@ class IPS2SingleRoomControl extends IPSModule
 			// Es ist keine Variablen angegeben
 			return;
 		}
-		
+		$this->SendDebug("Measurement", "Ausfuehrung", 0);
 		// die Daten aus den Angaben zum Fensterstatus aufbereiten
 		If ($this->ReadPropertyInteger("WindowStatusID") == 0) {
 			// Es ist keine Variablen angegeben
