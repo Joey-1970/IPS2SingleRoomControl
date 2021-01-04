@@ -346,17 +346,21 @@ class IPS2SingleRoomControl extends IPSModule
 				// Änderung des Fensterstatus
 				elseif ($SenderID == $this->ReadPropertyInteger("WindowStatusID")) {
 					$this->WindowStatus();
+					$this->SendDebug("MessageSink", "Ausloeser Fensterstatus oben", 0);
 					$this->Measurement();
 				}
 				elseif ($SenderID == $this->ReadPropertyInteger("WindowStatusBelowID")) {
+					$this->SendDebug("MessageSink", "Ausloeser Fensterstatus unten", 0);
 					$this->WindowStatus();
 				}
 				// Änderung des Anwesenheitsstatus
 				elseif ($SenderID == $this->ReadPropertyInteger("PresenceStatusID")) {
+					$this->SendDebug("MessageSink", "Ausloeser Anwesenheitsstatus", 0);
 					$this->Measurement();
 				}
 				// Änderung des Urlaubs-/Feiertagsstatus
 				elseif ($SenderID == $this->ReadPropertyInteger("DayStatusID")) {
+					$this->SendDebug("MessageSink", "Ausloeser Urlaubs-/Fensterstatus", 0);
 					$this->Measurement();
 				}
 				break;
