@@ -497,14 +497,17 @@ class IPS2SingleRoomControl extends IPSModule
 			SetValueBoolean($this->GetIDForIdent("PWM_Mode"), true);
 			// allgemeiner Aktor true-false
 			If (($this->ReadPropertyInteger("ActuatorTyp") == 1) AND ($this->ReadPropertyInteger("PWM_ActuatorID") > 0)) {
+				$this->SendDebug("Measurement", "Sendung an Allgemeinen-Aktor", 0);
 				SetValueBoolean($this->ReadPropertyInteger("PWM_ActuatorID"), true);
 			}
 			// 1W-Aktor
 			If (($this->ReadPropertyInteger("ActuatorTyp") == 4) AND ($this->ReadPropertyInteger("1W_ActuatorID") > 0)) {
+				$this->SendDebug("Measurement", "Sendung an 1W-Aktor", 0);
 				OW_SetPin($this->ReadPropertyInteger("1W_ActuatorID"), $this->ReadPropertyInteger("1W_Pin"), true);
 			}
 			// ESP-Aktor
 			If (($this->ReadPropertyInteger("ActuatorTyp") == 5) AND ($this->ReadPropertyInteger("ESP_ActuatorID") > 0)) {
+				$this->SendDebug("Measurement", "Sendung an ESP-Aktor", 0);
 				USCK_SendText($this->ReadPropertyInteger("ESP_ActuatorID"),"3,0");
 			}
 			$this->SetTimerInterval("PWM", (int)$PWMontime * 1000);
@@ -513,20 +516,24 @@ class IPS2SingleRoomControl extends IPSModule
 			SetValueBoolean($this->GetIDForIdent("PWM_Mode"), false);
 			// allgemeiner Aktor true-false
 			If (($this->ReadPropertyInteger("ActuatorTyp") == 1) AND ($this->ReadPropertyInteger("PWM_ActuatorID") > 0)) {
+				$this->SendDebug("Measurement", "Sendung an Allgemeinen-Aktor", 0);
 				SetValueBoolean($this->ReadPropertyInteger("PWM_ActuatorID"), false);
 			}
 			// 1W-Aktor
 			If (($this->ReadPropertyInteger("ActuatorTyp") == 4) AND ($this->ReadPropertyInteger("1W_ActuatorID") > 0)) {
+				$this->SendDebug("Measurement", "Sendung an 1W-Aktor", 0);
 				OW_SetPin($this->ReadPropertyInteger("1W_ActuatorID"), $this->ReadPropertyInteger("1W_Pin"), false);
 			}
 			// ESP-Aktor
 			If (($this->ReadPropertyInteger("ActuatorTyp") == 5) AND ($this->ReadPropertyInteger("ESP_ActuatorID") > 0)) {
+				$this->SendDebug("Measurement", "Sendung an ESP-Aktor", 0);
 				USCK_SendText($this->ReadPropertyInteger("ESP_ActuatorID"),"3,1");
 			}
 		}
 		
 		// HM-Aktor
 		If (($this->ReadPropertyInteger("ActuatorTyp") == 2) AND ($this->ReadPropertyInteger("HM_ActuatorID") > 0)) {
+			$this->SendDebug("Measurement", "Sendung an HM-Aktor", 0);
 			If ($WindowStatus == true) {
 				HM_WriteValueFloat($this->ReadPropertyInteger("HM_ActuatorID"), "SET_TEMPERATURE", GetValueFloat($this->GetIDForIdent("SetpointTemperature")) );
 			}
@@ -536,6 +543,7 @@ class IPS2SingleRoomControl extends IPSModule
 		}
 		// HMIP-Aktor
 		If (($this->ReadPropertyInteger("ActuatorTyp") == 6) AND ($this->ReadPropertyInteger("HMIP_ActuatorID") > 0)) {
+			$this->SendDebug("Measurement", "Sendung an HMIP-Aktor", 0);
 			If ($WindowStatus == true) {
 				HM_WriteValueFloat($this->ReadPropertyInteger("HMIP_ActuatorID"), "SET_POINT_TEMPERATURE", GetValueFloat($this->GetIDForIdent("SetpointTemperature")) );
 			}
@@ -545,6 +553,7 @@ class IPS2SingleRoomControl extends IPSModule
 		}
 		// FS20-Aktor
 		If (($this->ReadPropertyInteger("ActuatorTyp") == 3) AND ($this->ReadPropertyInteger("FS_ActuatorID") > 0)) {
+			$this->SendDebug("Measurement", "Sendung an FS20-Aktor", 0);
 			If ($WindowStatus == true) {
 				FHT_SetTemperature($this->ReadPropertyInteger("FS_ActuatorID") , GetValueFloat($this->GetIDForIdent("SetpointTemperature")) );
 			}
