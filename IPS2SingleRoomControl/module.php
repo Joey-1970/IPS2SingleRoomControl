@@ -605,6 +605,7 @@ class IPS2SingleRoomControl extends IPSModule
 			$this->SetTimerInterval("AutomaticFallback", ($this->ReadPropertyInteger("AutomaticFallback") * 1000 * 60));	
 		}
 		SetValueFloat($this->GetIDForIdent("SetpointTemperature"), max(5, Min($Value, 35)));
+		$this->SendDebug("SetTemperature", "Temperatur gesetzt", 0);
 		$this->Measurement();
 	}
 	
@@ -646,6 +647,7 @@ class IPS2SingleRoomControl extends IPSModule
 		SetValueBoolean($this->GetIDForIdent("OperatingMode"),  true);
 		SetValueBoolean($this->GetIDForIdent("OperatingModeInterrupt"),  false);
 		$this->SetTimerInterval("AutomaticFallback", 0);
+		$this->SendDebug("AutomaticFallback", "Manuell automatische Abschaltung", 0);
 		$this->Measurement();
 	}
 	
@@ -653,6 +655,7 @@ class IPS2SingleRoomControl extends IPSModule
 	{
 		SetValueBoolean($this->GetIDForIdent("BoostMode"),  false);
 		$this->SetTimerInterval("AutomaticFallbackBoost", 0);
+		$this->SendDebug("AutomaticFallbackBoost", "Boost automatische Abschaltung", 0);
 		$this->Measurement();
 	}
 	
