@@ -413,10 +413,11 @@ class IPS2SingleRoomControl extends IPSModule
 			// wenn eine Variable angegeben ist, wird der Zustand des Fensters in die Hilfsvariable geschrieben
 			$PresenceStatus = GetValueBoolean($this->ReadPropertyInteger("PresenceStatusID"));
 		}
-		$Weekplan = $this->GetValue("Weekplan");
+	
 		// wenn der Mode auf Automatik ist, den aktuellen Soll-Wert aus dem Wochenplan lesen
 		If ((GetValueBoolean($this->GetIDForIdent("OperatingMode")) == true) AND (GetValueBoolean($this->GetIDForIdent("OperatingModeInterrupt")) == false)) { 	
-			SetValueInteger($this->GetIDForIdent("Modus"), 1);
+			$this->SetValue("Modus", 1);
+			$Weekplan = $this->GetValue("Weekplan");
 			If ($DayStatus == false) {
 				If ($Weekplan == 0) {
 					$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 2, pow(2, date("N") - 1), date("H"), date("i"));
@@ -641,8 +642,16 @@ class IPS2SingleRoomControl extends IPSModule
 		If ($Value == true) {
 			$this->SetTimerInterval("AutomaticFallback", 0);
 			SetValueBoolean($this->GetIDForIdent("OperatingModeInterrupt"),  false);
-			// Aktuellen Wert des Wochenplans auslesen
-			$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 2, pow(2, date("N") - 1), date("H"), date("i"));
+			$Weekplan = $this->GetValue("Weekplan");
+			If ($Weekplan == 0) {
+				// Aktuellen Wert des Wochenplans auslesen
+				$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 2, pow(2, date("N") - 1), date("H"), date("i"));
+			}
+			elseif ($Weekplan == 1) {
+				// Aktuellen Wert des Wochenplans auslesen
+				$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_2_".$this->InstanceID), 2, pow(2, date("N") - 1), date("H"), date("i"));
+			}
+			
 			If (!$ActionID) {
 				IPS_LogMessage("IPS2SingleRoomControl", "Fehler bei der Ermittlung der Wochenplan-Solltemperatur!"); 	
 			}
