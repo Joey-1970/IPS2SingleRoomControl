@@ -208,9 +208,6 @@ class IPS2SingleRoomControl extends IPSModule
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "WindowStatusBelowID", "caption" => "Fenster Status");
 		$arrayElements[] = array("type" => "CheckBox", "name" => "WindowStatusMode", "caption" => "Eingänge der Fenstermelder negieren");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LoggingSetpointTemperature", "caption" => "Logging Soll-Temperatur aktivieren");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LoggingActualTemperature", "caption" => "Logging Ist-Temperatur aktivieren");
-		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Label", "label" => "Vorgaben für den Wochenplan:"); 
 		$arrayElements[] = array("type" => "Label", "label" => "Temperatur 1:");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Temperatur_1", "caption" => "Grad C°", "digits" => 1);
@@ -416,17 +413,27 @@ class IPS2SingleRoomControl extends IPSModule
 			// wenn eine Variable angegeben ist, wird der Zustand des Fensters in die Hilfsvariable geschrieben
 			$PresenceStatus = GetValueBoolean($this->ReadPropertyInteger("PresenceStatusID"));
 		}
-		
+		$Weekplan = $this->GetValue("Weekplan");
 		// wenn der Mode auf Automatik ist, den aktuellen Soll-Wert aus dem Wochenplan lesen
 		If ((GetValueBoolean($this->GetIDForIdent("OperatingMode")) == true) AND (GetValueBoolean($this->GetIDForIdent("OperatingModeInterrupt")) == false)) { 	
 			SetValueInteger($this->GetIDForIdent("Modus"), 1);
-			If ($DayStatus == false) {			
-				$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 2, pow(2, date("N") - 1), date("H"), date("i"));
+			If ($DayStatus == false) {
+				If ($Weekplan == 0) {
+					$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 2, pow(2, date("N") - 1), date("H"), date("i"));
+				}
+				elseif ($Weekplan == 1) {
+					$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_2_".$this->InstanceID), 2, pow(2, date("N") - 1), date("H"), date("i"));
+				}
 			}
 			else {
 				SetValueInteger($this->GetIDForIdent("Modus"), 4);
-				// Feiertage/Urlaub wird wie ein Sonntag behandelt
-				$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 2, 64, date("H"), date("i"));
+				If ($Weekplan == 0) {
+					// Feiertage/Urlaub wird wie ein Sonntag behandelt
+					$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 2, 64, date("H"), date("i"));
+				}
+				elseif ($Weekplan == 1) {
+					$ActionID = $this->GetEventActionID($this->GetIDForIdent("IPS2SRC_Event_2_".$this->InstanceID), 2, 64, date("H"), date("i"));
+				}
 			}	
 			
 			If (!$ActionID) {
