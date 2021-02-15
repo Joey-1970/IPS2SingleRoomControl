@@ -42,8 +42,6 @@ class IPS2SingleRoomControl extends IPSModule
 		$this->RegisterPropertyInteger("TemperatureIncrease", 3);
 		$this->RegisterPropertyInteger("AutomaticFallbackBoost", 60);
 		$this->RegisterTimer("AutomaticFallbackBoost", 0, 'IPS2SRC_AutomaticFallbackBoost($_IPS["TARGET"]);');
-		$this->RegisterPropertyBoolean("LoggingSetpointTemperature", false);
-		$this->RegisterPropertyBoolean("LoggingActualTemperature", false);
 		$this->RegisterPropertyFloat("Temperatur_1", 16.0);
 		$this->RegisterPropertyFloat("Temperatur_2", 17.0);
 		$this->RegisterPropertyFloat("Temperatur_3", 18.0);
@@ -76,6 +74,10 @@ class IPS2SingleRoomControl extends IPSModule
 		IPS_SetVariableProfileAssociation("heating.modus", 4, "Feiertag", "Radiator", -1);
 		IPS_SetVariableProfileAssociation("heating.modus", 5, "Lüftung", "Radiator", -1);
 		
+		$this->RegisterProfileInteger("IPS2SingleRoomControl.Weekplan", "Calendar", "", "", 0, 2, 0);
+		IPS_SetVariableProfileAssociation("IPS2SingleRoomControl.Weekplan", 0, "Primär", "Calendar", -1);
+		IPS_SetVariableProfileAssociation("IPS2SingleRoomControl.Weekplan", 1, "Sekundär", "Calendar", -1);
+		
 		// Statusvariablen anlegen
 		$this->RegisterVariableFloat("ActualTemperature", "Ist-Temperatur", "~Temperature", 10);
 		
@@ -83,6 +85,8 @@ class IPS2SingleRoomControl extends IPSModule
 		$this->EnableAction("SetpointTemperature");
 		$this->RegisterVariableBoolean("OperatingMode", "Betriebsart Automatik", "~Switch", 30);
 		$this->EnableAction("OperatingMode");
+		$this->RegisterVariableInteger("Weekplan", "Wochenplan", "IPS2SingleRoomControl.Weekplan", 31);
+		$this->EnableAction("Weekplan");
 		$this->RegisterVariableBoolean("OperatingModeInterrupt", "Betriebsart Automatik Interrupt", "~Switch", 32);
 		
 		$this->RegisterVariableBoolean("BoostMode", "Boost-Mode", "~Switch", 35);
@@ -250,23 +254,23 @@ class IPS2SingleRoomControl extends IPSModule
 		
 		// Anlegen des Wochenplans
 		$this->RegisterEvent("Wochenplan", "IPS2SRC_Event_".$this->InstanceID, 2, $this->InstanceID, 150);
+		// Anlegen des alternativen Wochenplans
+		$this->RegisterEvent("Wochenplan 2", "IPS2SRC_Event_2_".$this->InstanceID, 2, $this->InstanceID, 160);
 		
 		// Anlegen der Daten für den Wochenplan
 		for ($i = 0; $i <= 6; $i++) {
 			IPS_SetEventScheduleGroup($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), $i, pow(2, $i));
+			IPS_SetEventScheduleGroup($this->GetIDForIdent("IPS2SRC_Event_2_".$this->InstanceID), $i, pow(2, $i));
 		}
 		for ($i = 1; $i <= 8; $i++) {
 			$Value = $this->ReadPropertyFloat("Temperatur_".$i);
 			$this->RegisterScheduleAction($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), $i - 1, $Value."C°", $this->ReadPropertyInteger("ColorTemperatur_".$i), "IPS2SRC_SetTemperature(\$_IPS['TARGET'], ".$Value.");");
+			$this->RegisterScheduleAction($this->GetIDForIdent("IPS2SRC_Event_2_".$this->InstanceID), $i - 1, $Value."C°", $this->ReadPropertyInteger("ColorTemperatur_".$i), "IPS2SRC_SetTemperature(\$_IPS['TARGET'], ".$Value.");");
 		}
-		
-		// Logging setzen
-		AC_SetLoggingStatus(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0], $this->GetIDForIdent("ActualTemperature"), $this->ReadPropertyBoolean("LoggingActualTemperature"));
-		AC_SetLoggingStatus(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0], $this->GetIDForIdent("SetpointTemperature"), $this->ReadPropertyBoolean("LoggingSetpointTemperature"));
-		IPS_ApplyChanges(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0]);
 		
 		// Registrierung für Nachrichten des Wochenplans
 		$this->RegisterMessage($this->GetIDForIdent("IPS2SRC_Event_".$this->InstanceID), 10803);
+		$this->RegisterMessage($this->GetIDForIdent("IPS2SRC_Event_2_".$this->InstanceID), 10803);
 		
 		// Registrierung für die Änderung der Ist-Temperatur
 		If ($this->ReadPropertyInteger("ActualTemperatureID") > 0) {
@@ -312,9 +316,9 @@ class IPS2SingleRoomControl extends IPSModule
 	            	//Neuen Wert in die Statusvariable schreiben
 	            	If ($this->GetIDForIdent("OperatingMode") == true) {
 				$this->SetTimerInterval("AutomaticFallback", ($this->ReadPropertyInteger("AutomaticFallback") * 1000 * 60));
-				SetValueBoolean($this->GetIDForIdent("OperatingModeInterrupt"),  true);
+				$this->SetValue("OperatingModeInterrupt",  true);
 			}
-			SetValueFloat($this->GetIDForIdent($Ident), max(5, Min($Value, 35)));
+			$this->SetValue($Ident, max(5, Min($Value, 35)));
 			$this->Measurement();
 	            	break;
 	        case "OperatingMode":
@@ -323,6 +327,10 @@ class IPS2SingleRoomControl extends IPSModule
 	            	break;
 		case "BoostMode":
 	            	$this->SetBoostMode($Value);
+			$this->Measurement();
+	            	break;
+		case "Weekplan":
+	            	$this->SetValue("Weekplan", $Value);
 			$this->Measurement();
 	            	break;
 	        default:
